@@ -93,17 +93,20 @@ afterEvaluate { project ->
     }
 
     task androidJavadocs(type: Javadoc) {
+        if (!hasProperty('android')) return
         source = android.sourceSets.main.java.srcDirs
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     }
 
     task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
         classifier = 'javadoc'
+        if (!hasProperty('android') && hasProperty('groovydoc')) from groovydoc.destinationDir else
         from androidJavadocs.destinationDir
     }
 
     task androidSourcesJar(type: Jar) {
         classifier = 'sources'
+        if (!hasProperty('android') && sourceSets.hasProperty('main')) from sourceSets.main.allSource else
         from android.sourceSets.main.java.sourceFiles
     }
 
